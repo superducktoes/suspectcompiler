@@ -1,0 +1,7 @@
+[packageInfo]
+name = "suspectcompiler"
+version = "0.1.0"
+authors = ["Nick Roy <me@nickroy.org>"]
+edition = "2020"
+description = "small markdown compiler"
+homepage = "http://nickroy.org"
