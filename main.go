@@ -85,12 +85,12 @@ func parseMarkdownFile(fileName string, tokens *[]string) {
 				outputString = "<h1>" + line[2:] + "</h1>"
 			} else if firstChar == "@" {
 
-				// extract our variable
+				// extract our variable for where to post to
 				var rgx = regexp.MustCompile(`\((.*?)\)`)
 				rs := rgx.FindStringSubmatch(line[0:])
 
-				outputString = `<form action="/" id="testForm" onSubmit="myFunction()">
-				<label for="` + rs[1] + `fname">Email:</label><br>
+				outputString = `<form action="` + rs[1] + `" id="testForm" onSubmit="myFunction()">
+				<label for="fname">Email:</label><br>
 				<input type="text" id="fname" name="fname" value="test@test.com"><br>
 				<input type="submit" value="Submit">
 			  </form>

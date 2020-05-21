@@ -12,4 +12,4 @@ Sometimes, he even drinks water.
 Jesse likes to write about computer programming and game design.
 
 # Write to me
-@(emailAddress) send me an email
+@(/) send me an email
