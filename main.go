@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/BurntSushi/toml"
 )
@@ -79,8 +80,33 @@ func parseMarkdownFile(fileName string, tokens *[]string) {
 			outputString = "<br>"
 		} else {
 			firstChar = line[0:1]
+
 			if firstChar == "#" {
 				outputString = "<h1>" + line[2:] + "</h1>"
+			} else if firstChar == "@" {
+
+				// extract our variable
+				var rgx = regexp.MustCompile(`\((.*?)\)`)
+				rs := rgx.FindStringSubmatch(line[0:])
+
+				outputString = `<form action="/" id="testForm" onSubmit="myFunction()">
+				<label for="` + rs[1] + `fname">Email:</label><br>
+				<input type="text" id="fname" name="fname" value="test@test.com"><br>
+				<input type="submit" value="Submit">
+			  </form>
+			  <p id="demo"></p>
+			  <script>
+			  function myFunction() {
+				var emailAddress = document.getElementById("fname").value
+				document.getElementById("demo").innerHTML = "Thanks for submitting " + emailAddress;
+				
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "https://webhook.site/fbb98873-b380-438d-b673-1c3a2673a1e7/" + emailAddress);
+				xhr.setRequestHeader('Content-Type', 'application/json');
+				xhr.send(emailAddress);
+			  }
+			  </script> 
+			  `
 			} else {
 				// anything else is going to be a normal paragraph
 				outputString = "<p>" + line[0:] + "</p>"
@@ -89,6 +115,33 @@ func parseMarkdownFile(fileName string, tokens *[]string) {
 		*tokens = append(*tokens, outputString)
 	}
 
+}
+
+func writeFile(tokens *[]string) {
+
+	fmt.Println("Writing file...")
+
+	// create our new file
+	f, err := os.Create("output.html")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// iterate through our tokens and write to the file
+	for _, token := range *tokens {
+		_, err := f.WriteString(token)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Finished writing file")
 }
 
 func main() {
@@ -112,4 +165,5 @@ func main() {
 
 	parseTomlFile(&conf)
 	parseMarkdownFile(fileName, &tokens)
+	writeFile(&tokens)
 }
